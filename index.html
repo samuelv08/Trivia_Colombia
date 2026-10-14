@@ -49,7 +49,7 @@
 
       <div class="cabecera__acciones">
         <!-- Botones de alternancia: la etiqueta es fija y el estado va en aria-pressed -->
-        <button type="button" class="btn-icono" id="btn-sonido" aria-label="Sonido" aria-pressed="true" title="Activar o desactivar el sonido">
+        <button type="button" class="btn-icono" id="btn-sonido" aria-label="Desactivar sonido" aria-pressed="true" title="Desactivar los sonidos del juego">
           <span class="ico-encendido" aria-hidden="true">🔊</span>
           <span class="ico-apagado" aria-hidden="true">🔇</span>
         </button>
@@ -564,6 +564,58 @@
       let inicioPartida = 0;
       let resultadoGuardado = false;
       let avisoTimeout = null;
+      let contextoAudio = null;
+
+      function emitirTono(contexto, frecuencia, inicio, duracion, volumen = 0.08) {
+        const oscilador = contexto.createOscillator();
+        const ganancia = contexto.createGain();
+        const tiempoInicio = contexto.currentTime + inicio;
+        oscilador.type = 'sine';
+        oscilador.frequency.setValueAtTime(frecuencia, tiempoInicio);
+        ganancia.gain.setValueAtTime(0.0001, tiempoInicio);
+        ganancia.gain.exponentialRampToValueAtTime(volumen, tiempoInicio + 0.015);
+        ganancia.gain.exponentialRampToValueAtTime(0.0001, tiempoInicio + duracion);
+        oscilador.connect(ganancia);
+        ganancia.connect(contexto.destination);
+        oscilador.start(tiempoInicio);
+        oscilador.stop(tiempoInicio + duracion);
+      }
+
+      function reproducirPatron(contexto, tipo) {
+        const patrones = {
+          correcto: [[523, 0, 0.16], [659, 0.13, 0.22], [784, 0.29, 0.32]],
+          incorrecto: [[330, 0, 0.2], [247, 0.19, 0.3]],
+          tiempo: [[440, 0, 0.13], [349, 0.15, 0.13], [262, 0.3, 0.32]],
+          comodin: [[659, 0, 0.12], [880, 0.1, 0.2]],
+          activar: [[587, 0, 0.1], [784, 0.09, 0.18]],
+          continuar: [[440, 0, 0.08]]
+        };
+        patrones[tipo].forEach(([frecuencia, inicio, duracion]) => {
+          emitirTono(contexto, frecuencia, inicio, duracion, tipo === 'activar' ? 0.04 : 0.07);
+        });
+      }
+
+      function reproducirSonido(tipo) {
+        if ($('#btn-sonido').getAttribute('aria-pressed') !== 'true') return;
+        const AudioContexto = window.AudioContext;
+        if (!AudioContexto) {
+          mostrarAviso('El navegador no admite la reproducción de sonidos.');
+          return;
+        }
+        if (!contextoAudio) contextoAudio = new AudioContexto();
+        if (contextoAudio.state === 'suspended') {
+          contextoAudio.resume()
+            .then(() => {
+              if ($('#btn-sonido').getAttribute('aria-pressed') === 'true') reproducirPatron(contextoAudio, tipo);
+            })
+            .catch((error) => {
+              console.error('No se pudo activar el audio de la trivia.', error);
+              mostrarAviso('No se pudo activar el audio. Revisa los permisos de sonido del navegador.');
+            });
+          return;
+        }
+        reproducirPatron(contextoAudio, tipo);
+      }
 
       function mostrarAviso(mensaje) {
         const aviso = $('#aviso-global');
@@ -821,12 +873,14 @@
           ? 'Puntaje acumulado: ' + formatoPuntaje.format(puntajePartida) + ' pts'
           : 'Esta pregunta suma 0 puntos y se reinicia tu racha';
         bloqueRetro.hidden = false;
+        reproducirSonido(acerto ? 'correcto' : tiempoAgotado ? 'tiempo' : 'incorrecto');
         banner.focus();
       }
 
       opciones.forEach((o, i) => o.addEventListener('click', () => responder(i)));
       $('#btn-siguiente').addEventListener('click', () => {
         if (bloqueRetro.hidden) return;
+        reproducirSonido('continuar');
         if (numeroPregunta === TOTAL_PREGUNTAS) {
           $('#resultado-nombre').textContent = $('#config-nombre').textContent;
           $('#resultado-aciertos').textContent = aciertos + '/' + TOTAL_PREGUNTAS;
@@ -880,6 +934,7 @@
         puntajePartida = Math.max(0, puntajePartida - 30);
         $('#puntaje-actual').textContent = formatoPuntaje.format(puntajePartida);
         btnCincuenta.disabled = true;
+        reproducirSonido('comodin');
       });
       btnTiempo.addEventListener('click', () => {
         if (comodinTiempoUsado || segundosRestantes === 0 || !bloqueRetro.hidden) return;
@@ -890,6 +945,7 @@
         limiteTemporizador += 10;
         btnTiempo.disabled = true;
         actualizarTemporizador();
+        reproducirSonido('comodin');
       });
 
       // ----- Navegación entre pantallas -----
@@ -938,7 +994,11 @@
       // ----- Sonido y tema -----
       $('#btn-sonido').addEventListener('click', (e) => {
         const b = e.currentTarget;
-        b.setAttribute('aria-pressed', String(b.getAttribute('aria-pressed') !== 'true'));
+        const activado = b.getAttribute('aria-pressed') !== 'true';
+        b.setAttribute('aria-pressed', String(activado));
+        b.setAttribute('aria-label', activado ? 'Desactivar sonido' : 'Activar sonido');
+        b.title = activado ? 'Desactivar los sonidos del juego' : 'Activar los sonidos del juego';
+        if (activado) reproducirSonido('activar');
       });
       $('#btn-tema').addEventListener('click', (e) => {
         const oscuro = document.documentElement.dataset.tema !== 'oscuro';
