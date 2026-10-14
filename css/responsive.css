@@ -1,0 +1,136 @@
+/* ==========================================================================
+   Trivia Colombia · responsive.css
+   Ajustes para pantallas más anchas que el diseño base (mobile-first).
+   Puntos de quiebre:
+     ≥ 640 px  → móvil grande / tableta: más columnas, tabla de ranking, botones en fila
+     ≥ 960 px  → escritorio: tipografía grande, dos columnas en ranking, diseño de 1440 px
+   ========================================================================== */
+
+/* ---------- ≥ 640 px ---------- */
+@media (min-width: 640px) {
+
+  /* Inicio: la tarjeta recupera fondo, borde y sombra */
+  .tarjeta--inicio {
+    padding: 48px;
+    background: var(--color-superficie);
+    border: 1px solid var(--color-borde);
+    box-shadow: var(--sombra-tarjeta);
+  }
+
+  /* Instrucciones: rejilla de 2 × 2 */
+  .rejilla-instrucciones { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+  /* Configuración: 3 columnas de categorías y botones en fila */
+  .rejilla-categorias { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+  .acciones--fin { flex-direction: row; justify-content: flex-end; }
+  .acciones--fin .btn--ancho { min-width: 240px; }
+  .segmento__etiqueta { flex-direction: row; gap: 8px; }
+  .segmento__mult::before { content: "· "; }
+
+  /* Juego: opciones en rejilla de 2 × 2 y comodines centrados */
+  .opciones { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+  .opcion { min-height: 72px; }
+  .comodines { justify-content: center; gap: 16px; }
+  .btn--comodin { flex: 0 0 200px; font-size: 1rem; }
+
+  /* Retroalimentación: el botón deja de estar fijo y se alinea a la derecha */
+  .retro__acciones {
+    position: static;
+    display: flex;
+    justify-content: flex-end;
+    padding: 0;
+    border-top: 0;
+    background: none;
+  }
+  .retro__acciones .btn { width: auto; min-width: 200px; }
+
+  /* Resultado: 4 tarjetas en una fila y botones en fila */
+  .datos { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+  .acciones--centrado,
+  .acciones--ranking { flex-direction: row; justify-content: center; }
+  .acciones--ranking { justify-content: space-between; }
+
+  /* Ranking: la lista de tarjetas se convierte en tabla */
+  .tabla-ranking { display: table; overflow: hidden; border-radius: var(--radio-boton); }
+  .tabla-ranking thead { display: table-header-group; background: var(--color-primario); color: var(--color-sobre-primario); }
+  .tabla-ranking tbody { display: table-row-group; }
+  .tabla-ranking tr {
+    display: table-row;
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+  }
+  .tabla-ranking tbody tr:nth-child(even) { background: var(--color-hover-suave); }
+  .tabla-ranking th,
+  .tabla-ranking td {
+    height: 52px;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--color-borde);
+    vertical-align: middle;
+    text-align: left;
+    font-size: 0.9375rem;
+  }
+  .tabla-ranking th { border-bottom: 0; font-weight: 600; }
+  .tabla-ranking__pos { white-space: nowrap; }
+  .tabla-ranking__num::before { content: none; }
+  .tabla-ranking__puntaje { text-align: left; }
+  .tabla-ranking__puntaje::after { content: none; }
+  .tabla-ranking__dif { display: block; font-size: 0.875rem; color: var(--color-texto-suave); }
+  .tabla-ranking__dif::before { content: none; }
+  .tabla-ranking__cat,
+  .tabla-ranking__fecha { font-size: 0.9375rem; line-height: 1.375rem; color: var(--color-texto); text-align: left; }
+  .tabla-ranking__fecha { white-space: nowrap; }
+
+  /* Modal: botones en fila */
+  .modal__acciones { flex-direction: row; justify-content: flex-end; }
+}
+
+/* ---------- ≥ 960 px (escritorio) ---------- */
+@media (min-width: 960px) {
+
+  /* Tipografía de escritorio (tamaños de la guía de estilos) */
+  :root {
+    --fs-display: 4.5rem;    --lh-display: 5rem;
+    --fs-h1: 3rem;           --lh-h1: 3.5rem;
+    --fs-h2: 2rem;           --lh-h2: 2.5rem;
+    --fs-h3: 1.25rem;        --lh-h3: 1.75rem;
+    --fs-enunciado: 1.625rem; --lh-enunciado: 2.25rem;
+    --fs-cuerpo: 1.125rem;   --lh-cuerpo: 1.75rem;
+  }
+
+  /* Estructura */
+  .cabecera__interior { min-height: 72px; }
+  .marca { font-size: 1.25rem; }
+  .principal { padding-block: 48px 64px; }
+
+  /* Inicio */
+  .logo--grande { width: 96px; height: 96px; }
+
+  /* Instrucciones */
+  .rejilla-instrucciones { gap: 24px; }
+  .tarjeta { padding: 24px; }
+  .tabla-puntos { font-size: 1rem; }
+
+  /* Configuración */
+  .rejilla-categorias { gap: 24px; }
+  .tarjeta-categoria { min-height: 132px; padding: 20px; }
+  .tarjeta-categoria__icono { font-size: 3rem; }
+  .segmento__etiqueta { min-height: 64px; }
+
+  /* Juego */
+  .tarjeta--pregunta { padding: 32px; }
+  .temporizador { margin-top: 24px; }
+  .opcion { padding: 16px 20px; font-size: 1.0625rem; }
+
+  /* Resultado */
+  .dato { min-height: 96px; }
+
+  /* Ranking: dos columnas (Top 10 a la izquierda, estadísticas a la derecha) */
+  .ranking-layout { grid-template-columns: 7fr 5fr; gap: 32px; align-items: start; }
+  .ranking-top { grid-column: 1; grid-row: 1; }
+  .ranking-estadisticas { grid-column: 2; grid-row: 1; }
+  .estadisticas { grid-template-columns: 1fr; }
+  .estadisticas .dato { min-height: 88px; }
+}
