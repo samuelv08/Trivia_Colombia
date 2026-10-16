@@ -108,7 +108,7 @@
   .tabla-puntos { font-size: 1rem; }
 
   /* Configuración */
-  .rejilla-categorias { gap: 24px; }
+  /* El espaciado de las categorías lo controla el gutter de Bootstrap. */
   .tarjeta-categoria { min-height: 132px; padding: 20px; }
   .tarjeta-categoria__icono { font-size: 3rem; }
   .segmento__etiqueta { min-height: 64px; }
