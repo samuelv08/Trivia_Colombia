@@ -1,7 +1,8 @@
 /* ==========================================================================
    Trivia Colombia · styles.css
-   Estilos base, componentes y pantallas (enfoque mobile-first: 360 px en adelante).
-   Los ajustes para pantallas más anchas están en css/responsive.css.
+   Estilos base, componentes y pantallas (enfoque mobile-first).
+   La cuadrícula adaptable usa Bootstrap Grid; los retoques propios están
+   en css/responsive.css.
 
    Contenido:
    1. Variables (tokens de diseño) y tema oscuro
@@ -539,7 +540,7 @@ html[data-tema="oscuro"] .ico-sol { display: inline; }
 .inicio__secundarios .btn { flex: 1 1 0; min-width: 0; padding-inline: 12px; }
 
 /* --- Instrucciones --- */
-.rejilla-instrucciones { display: grid; gap: 16px; margin: 24px 0; }
+.rejilla-instrucciones { margin: 24px 0; }
 .rejilla-instrucciones > * { min-width: 0; }
 .tabla-puntos { width: 100%; border-collapse: collapse; font-size: 0.9375rem; line-height: 1.375rem; }
 .tabla-puntos th,
@@ -556,7 +557,7 @@ html[data-tema="oscuro"] .ico-sol { display: inline; }
 /* --- Configuración --- */
 .saludo { margin: 4px 0 24px; color: var(--color-texto-suave); font-size: var(--fs-h3); line-height: var(--lh-h3); font-weight: 500; }
 
-.rejilla-categorias { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.rejilla-categorias { display: flex; }
 .opcion-tarjeta { position: relative; min-width: 0; }
 
 .tarjeta-categoria {
@@ -682,14 +683,13 @@ html[data-tema="oscuro"] .ico-sol { display: inline; }
 }
 .temporizador--urgente .barra__relleno { background: var(--color-error-texto); }
 
-.opciones { display: grid; gap: 12px; margin-top: 16px; }
+.opciones { display: flex; margin-top: 16px; }
 
 .opcion {
   position: relative;
   display: flex;
   align-items: center;
   gap: 12px;
-  width: 100%;
   min-height: 64px;
   padding: 12px 16px;
   border: 2px solid var(--color-borde);
@@ -797,7 +797,7 @@ html[data-tema="oscuro"] .ico-sol { display: inline; }
 }
 
 /* Tarjetas de datos (resultado y estadísticas) */
-.datos { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.datos { display: flex; }
 .dato {
   display: flex;
   flex-direction: column;
@@ -863,9 +863,9 @@ html[data-tema="oscuro"] .ico-sol { display: inline; }
 .acciones--resultado { margin-top: 32px; }
 
 /* --- Ranking y estadísticas --- */
-.ranking-layout { display: grid; gap: 24px; margin-top: 24px; }
+.ranking-layout { display: flex; margin-top: 24px; }
 .ranking-layout > * { min-width: 0; }
-.estadisticas { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 12px; }
+.estadisticas { display: flex; margin-top: 12px; }
 .ranking-top h2 { margin-bottom: 12px; }
 .acciones--ranking { margin-top: 24px; }
 
